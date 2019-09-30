@@ -1,0 +1,9 @@
+name = Ding Campaign Plus Extra
+description = Add extra widgets for ding campaign plus panel.
+core = 7.x
+php = 7.0
+package = Ding!
+project = ding_campaign
+dependencies[] = ding_campaign_plus
+dependencies[] = features
+features[features_api][] = api:2
