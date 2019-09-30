@@ -50,7 +50,6 @@ function ding_campaign_plus_extra_grid_campaign_content_type_render($subtype, $c
   $width = (!empty($conf['ding_campaign_width'])) ? $conf['ding_campaign_width'] : 'ding_campaign_full_width';
   $widget = 'grid_campaign';
 
-//  $cid = _ding_campaign_plus_cache_id($context_data, $style);
   $cid = sha1(serialize([$widget, $context_data]));
   $cache = cache_get($cid);
   $content = '';
