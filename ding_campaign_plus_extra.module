@@ -1,0 +1,183 @@
+<?php
+/**
+ * @file
+ * Provide default hooks.
+ */
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function ding_campaign_plus_extra_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return 'plugins/content_types';
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ding_campaign_plus_extra_menu() {
+  $items = array();
+  $items['ding_campaigns_plus_extra/%'] = array(
+    'title' => 'Show campaign',
+    'page callback' => 'ding_campaign_plus_extra_campaign_ajax',
+    'page arguments' => array(1),
+    'theme callback' => 'ajax_base_page_theme',
+    'delivery callback' => 'ajax_deliver',
+    'access arguments' => array('access content'),
+  );
+
+  return $items;
+}
+
+/**
+ *
+ */
+function ding_campaign_plus_extra_campaign_ajax($cid) {
+  $cache_context = cache_get($cid . '-extra');
+  // If context not found, or no campaign found, we'll return no campaign.
+  $content = '';
+  if ($cache_context && isset($cache_context->data)) {
+    $cache = cache_get($cid);
+    // Check if we already have a cached campaign.
+    if (isset($cache->data) && REQUEST_TIME < $cache->expire) {
+      $content = $cache->data;
+    }
+    else {
+      $widget = $cache_context->data[1] ?? 'relevant_campaign';
+      $count = $cache_context->data[3] ?? 6;
+      $offset = $cache_context->data[4] ?? 0;
+      $more_link = $cache_context->data[5] ?? [];
+      $width = $cache_context->data[6] ?? 'ding_campaign_full_width';
+
+      $campaigns = ding_campaign_plus_get_matches($cache_context->data[0], $cache_context->data[1]);
+      $campaigns = array_slice($campaigns, $offset, $count);
+      $content = _ding_campaign_plus_extra_render_campaign($campaigns, $width, $widget, $more_link);
+      cache_set($cid, $content, 'cache', REQUEST_TIME + variable_get('ding_campaign_plus_expire', 900));
+    }
+  }
+  echo $content;
+  drupal_exit();
+}
+
+/**
+ * Render campaigns widgets.
+ *
+ * @param $campaigns
+ * @param string $style
+ * @param string $subtype
+ * @param array $more_link
+ * @return string
+ */
+function _ding_campaign_plus_extra_render_campaign($campaigns, $width = 'medium', $subtype = 'relevant_campaign', $more_link = array()) {
+  $content = array();
+  // Get node id's for the campaign nodes matching the context.
+
+  // If any campaigns were found.
+  if (!empty($campaigns)) {
+    // Set outer wrapper.
+    $content = array(
+      '#theme' => $subtype == 'relevant_campaign' ? 'ding_campaign_wrapper' : 'ding_campaign_grid_wrapper',
+      '#content' => array(),
+    );
+
+    // Load campaign nodes (use entity load to utilize entity cache).
+    $campaigns = entity_load('node', array_values($campaigns));
+
+    // Loop through campaigns.
+    foreach ($campaigns as $campaign) {
+      // Add current campaign to content array.
+      if ($subtype != 'grid_campaign') {
+        $node_view = node_view($campaign, 'full');
+        $node_view['#style'] = $width;
+        $content['#content'][] = $node_view;
+      }
+      else {
+        $image = $campaign->field_ding_campaign_plus_image[LANGUAGE_NONE][0]['uri'];
+        $content['#content'][] = theme('ding_campaign_grid', [
+            'title' => $campaign->title,
+            'image' => theme('image_style', array('path' => $image, 'style_name' => 'ding_campaign_grid')),
+            'description' => $campaign->field_ding_campaign_plus_text[LANGUAGE_NONE][0]['value'],
+            'link' => $campaign->field_ding_campaign_plus_link[LANGUAGE_NONE][0]['value'],
+          ]
+        );
+        if (array_filter($more_link)) {
+          $content['#more_link'] = l($more_link['link_title'], $more_link['link_url']);
+        }
+      }
+    }
+  }
+
+  return drupal_render($content);
+}
+
+
+/**
+ * Render a campaign from context and style.
+ *
+ * @param array $context_data
+ *   Context triggers for the current page.
+ * @param string $style
+ *   The style of campaign to display.
+ *
+ * @return string
+ *   Rendered campaign, or an empty string if no campaign was found.
+ */
+/*function _ding_campaign_plus_extra_render_campaign($campaign_nids, $view_mode = 'full', $more_link = NULL, $width = NULL) {
+
+  if (!empty($campaign_nids)) {
+    $campaign = FALSE;
+    foreach ($campaign_nids as $nid) {
+      // Use the first campaign only.
+      $campaign = node_load($nid);
+
+      // Check if campaign matches style.
+      if ($campaign->field_ding_campaign_plus_style[LANGUAGE_NONE][0]['value'] === $style) {
+        // Campaign found that matches style.
+        break;
+      }
+      else {
+        $campaign = FALSE;
+      }
+    }
+
+    if ($campaign) {
+      return drupal_render(node_view($campaign, $view_mode));
+    }
+  }
+
+  return '';
+}*/
+
+/**
+ * Implements hook_theme().
+ */
+function ding_campaign_plus_extra_theme($existing, $type, $theme, $path) {
+  return array(
+    'ding_campaign_wrapper' => array(
+      'variables' => array(
+        'content' => NULL,
+      ),
+      'template' => 'ding-campaign-wrapper',
+      'path' => $path . '/templates',
+    ),
+    'ding_campaign_grid_wrapper' => array(
+      'variables' => array(
+        'content' => NULL,
+        'more_link' => NULL,
+      ),
+      'template' => 'ding-campaign-grid-wrapper',
+      'path' => $path . '/templates',
+    ),
+    'ding_campaign_grid' => array(
+      'variables' => array(
+        'title' => NULL,
+        'image' => NULL,
+        'description' => NULL,
+        'link' => NULL,
+      ),
+      'template' => 'ding-campaign-grid',
+      'path' => $path . '/templates',
+    ),
+  );
+}

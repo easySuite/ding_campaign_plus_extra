@@ -7,3 +7,4 @@ project = ding_campaign
 dependencies[] = ding_campaign_plus
 dependencies[] = features
 features[features_api][] = api:2
+features[image][] = ding_campaign_grid
