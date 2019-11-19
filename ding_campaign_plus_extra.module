@@ -44,11 +44,11 @@ function ding_campaign_plus_extra_campaign_ajax($cid) {
       $content = $cache->data;
     }
     else {
-      $widget = $cache_context->data[1] ?? 'relevant_campaign';
-      $count = $cache_context->data[3] ?? 6;
-      $offset = $cache_context->data[4] ?? 0;
-      $more_link = $cache_context->data[5] ?? [];
-      $width = $cache_context->data[6] ?? 'ding_campaign_full_width';
+      $widget = $cache_context->data[1] ? $cache_context->data[1] : 'relevant_campaign';
+      $count = $cache_context->data[3] ? $cache_context->data[3] : 6;
+      $offset = $cache_context->data[4] ? $cache_context->data[4] : 0;
+      $more_link = $cache_context->data[5] ? $cache_context->data[5] : [];
+      $width = $cache_context->data[6] ? $cache_context->data[6] : 'ding_campaign_full_width';
 
       $campaigns = ding_campaign_plus_get_matches($cache_context->data[0], $cache_context->data[1]);
       $campaigns = array_slice($campaigns, $offset, $count);
