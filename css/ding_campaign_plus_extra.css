@@ -1,0 +1,206 @@
+/* line 2, ../../../themes/ddbasic/sass/contrib/neat/grid/_grid.scss */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  50% {
+    -moz-transform: rotate(180deg);
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/* line 3, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item {
+  float: left;
+  display: block;
+  margin-right: 2.4911%;
+  width: 29.96441%;
+  margin: 0 10px 50px 10px;
+}
+/* line 38, ../../../themes/ddbasic/sass/contrib/neat/grid/_span-columns.scss */
+.ding-campaign-grid-item:last-child {
+  margin-right: 0;
+}
+/* line 7, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item h2 {
+  margin-bottom: 0px;
+  font-size: 120%;
+  line-height: 1;
+  padding-top: 10px;
+  position: absolute;
+  width: 200px;
+}
+@media screen and (max-width: 950px) {
+  /* line 3, ../sass/ding_campaign_plus_extra.scss */
+  .ding-campaign-grid-item {
+    float: left;
+    display: block;
+    margin-right: 2.4911%;
+    width: 44.48399%;
+  }
+  /* line 38, ../../../themes/ddbasic/sass/contrib/neat/grid/_span-columns.scss */
+  .ding-campaign-grid-item:last-child {
+    margin-right: 0;
+  }
+}
+@media screen and (max-width: 600px) {
+  /* line 3, ../sass/ding_campaign_plus_extra.scss */
+  .ding-campaign-grid-item {
+    float: left;
+    display: block;
+    margin-right: 10.76923%;
+    width: 100%;
+    margin: 0;
+    float: none;
+    padding-bottom: 15px;
+  }
+  /* line 38, ../../../themes/ddbasic/sass/contrib/neat/grid/_span-columns.scss */
+  .ding-campaign-grid-item:last-child {
+    margin-right: 0;
+  }
+}
+/* line 28, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .ding-campaign-grid-title a {
+  color: #262627;
+}
+/* line 33, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+}
+/* line 39, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__image {
+  display: block;
+}
+/* line 43, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__body {
+  background: rgba(0, 0, 0, 0.7);
+  bottom: 0;
+  color: white;
+  font-size: 1em;
+  left: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0.75em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  -webkit-transition: 0.6s;
+  transition: 0.6s;
+}
+/* line 59, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__body:hover {
+  opacity: 1;
+}
+/* line 63, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__body:after,
+.ding-campaign-grid-item .media__body:before {
+  bottom: 1em;
+  content: '';
+  left: 1em;
+  opacity: 0;
+  position: absolute;
+  right: 1em;
+  top: 1em;
+  -webkit-transform: scale(1.5);
+  -ms-transform: scale(1.5);
+  transform: scale(1.5);
+  -webkit-transition: 0.6s 0.2s;
+  transition: 0.6s 0.2s;
+}
+/* line 79, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__body:before {
+  border-bottom: none;
+  border-top: none;
+  left: 2em;
+  right: 2em;
+}
+/* line 86, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__body:after {
+  border-left: none;
+  border-right: none;
+  bottom: 2em;
+  top: 2em;
+}
+/* line 93, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__body:hover:after,
+.ding-campaign-grid-item .media__body:hover:before {
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  opacity: 1;
+}
+/* line 101, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__body h2 {
+  margin-top: 0;
+}
+/* line 105, ../sass/ding_campaign_plus_extra.scss */
+.ding-campaign-grid-item .media__body p {
+  margin-bottom: 1.5em;
+}
