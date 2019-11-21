@@ -71,9 +71,16 @@ function ding_campaign_single_campaign_content_type_render($subtype, $conf, $pan
     $node_view['#style'] = 'medium';
     $node_view['#widget_type'] = 'single';
 
+    // Check campaign link.
+    $campaign_link = '';
+    if (!empty($node_view["#node"]->field_ding_campaign_plus_link)) {
+      $campaign_link = $node_view['#node']->field_ding_campaign_plus_link[LANGUAGE_NONE][0]['url'];
+    }
+
     $content = [
       '#theme' => 'ding_campaign_wrapper',
       '#content' => $node_view,
+      '#campaign_link' => $campaign_link,
     ];
     $block = new stdClass();
     $block->content = $content;
