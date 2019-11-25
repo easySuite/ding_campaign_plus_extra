@@ -64,6 +64,7 @@ function ding_campaign_plus_extra_grid_campaign_content_type_render($subtype, $c
   }
 
   $block->content = $content;
+  drupal_add_css(drupal_get_path('module', 'ding_campaign_plus_extra') . '/css/ding_campaign_plus_extra.css', 'file');
 
   return $block;
 }

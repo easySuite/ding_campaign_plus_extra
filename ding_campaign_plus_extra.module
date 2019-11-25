@@ -31,7 +31,7 @@ function ding_campaign_plus_extra_menu() {
 }
 
 /**
- *
+ * Request and build campaign.
  */
 function ding_campaign_plus_extra_campaign_ajax($cid) {
   $cache_context = cache_get($cid . '-extra');
@@ -44,11 +44,11 @@ function ding_campaign_plus_extra_campaign_ajax($cid) {
       $content = $cache->data;
     }
     else {
-      $widget = $cache_context->data[1] ?? 'relevant_campaign';
-      $count = $cache_context->data[3] ?? 6;
-      $offset = $cache_context->data[4] ?? 0;
-      $more_link = $cache_context->data[5] ?? [];
-      $width = $cache_context->data[6] ?? 'ding_campaign_full_width';
+      $widget = $cache_context->data[1] ? $cache_context->data[1] : 'relevant_campaign';
+      $count = $cache_context->data[3] ? $cache_context->data[3] : 6;
+      $offset = $cache_context->data[4] ? $cache_context->data[4] : 0;
+      $more_link = $cache_context->data[5] ? $cache_context->data[5] : [];
+      $width = $cache_context->data[6] ? $cache_context->data[6] : 'ding_campaign_full_width';
 
       $campaigns = ding_campaign_plus_get_matches($cache_context->data[0], $cache_context->data[1]);
       $campaigns = array_slice($campaigns, $offset, $count);
@@ -70,6 +70,7 @@ function ding_campaign_plus_extra_campaign_ajax($cid) {
  * @return string
  */
 function _ding_campaign_plus_extra_render_campaign($campaigns, $width = 'medium', $subtype = 'relevant_campaign', $more_link = array()) {
+  global $language;
   $content = array();
   // Get node id's for the campaign nodes matching the context.
 
@@ -94,11 +95,18 @@ function _ding_campaign_plus_extra_render_campaign($campaigns, $width = 'medium'
       }
       else {
         $image = $campaign->field_ding_campaign_plus_image[LANGUAGE_NONE][0]['uri'];
+        $description = '';
+        if (!empty($campaign->field_ding_campaign_plus_text[LANGUAGE_NONE][0]['value'])) {
+          $description = $campaign->field_ding_campaign_plus_text[LANGUAGE_NONE][0]['value'];
+        }
+        elseif (!empty($campaign->metatags[$language->language]['abstract']['value'])) {
+          $description = $campaign->metatags[$language->language]['abstract']['value'];
+        }
         $content['#content'][] = theme('ding_campaign_grid', [
             'title' => $campaign->title,
             'image' => theme('image_style', array('path' => $image, 'style_name' => 'ding_campaign_grid')),
-            'description' => $campaign->field_ding_campaign_plus_text[LANGUAGE_NONE][0]['value'],
-            'link' => $campaign->field_ding_campaign_plus_link[LANGUAGE_NONE][0]['value'],
+            'description' => $description,
+            'link' => $campaign->field_ding_campaign_plus_link[LANGUAGE_NONE][0]['url'],
           ]
         );
         if (array_filter($more_link)) {
@@ -111,44 +119,6 @@ function _ding_campaign_plus_extra_render_campaign($campaigns, $width = 'medium'
   return drupal_render($content);
 }
 
-
-/**
- * Render a campaign from context and style.
- *
- * @param array $context_data
- *   Context triggers for the current page.
- * @param string $style
- *   The style of campaign to display.
- *
- * @return string
- *   Rendered campaign, or an empty string if no campaign was found.
- */
-/*function _ding_campaign_plus_extra_render_campaign($campaign_nids, $view_mode = 'full', $more_link = NULL, $width = NULL) {
-
-  if (!empty($campaign_nids)) {
-    $campaign = FALSE;
-    foreach ($campaign_nids as $nid) {
-      // Use the first campaign only.
-      $campaign = node_load($nid);
-
-      // Check if campaign matches style.
-      if ($campaign->field_ding_campaign_plus_style[LANGUAGE_NONE][0]['value'] === $style) {
-        // Campaign found that matches style.
-        break;
-      }
-      else {
-        $campaign = FALSE;
-      }
-    }
-
-    if ($campaign) {
-      return drupal_render(node_view($campaign, $view_mode));
-    }
-  }
-
-  return '';
-}*/
-
 /**
  * Implements hook_theme().
  */
@@ -157,6 +127,7 @@ function ding_campaign_plus_extra_theme($existing, $type, $theme, $path) {
     'ding_campaign_wrapper' => array(
       'variables' => array(
         'content' => NULL,
+        'campaign_link' => NULL,
       ),
       'template' => 'ding-campaign-wrapper',
       'path' => $path . '/templates',
@@ -180,4 +151,14 @@ function ding_campaign_plus_extra_theme($existing, $type, $theme, $path) {
       'path' => $path . '/templates',
     ),
   );
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function ding_campaign_plus_extra_preprocess_ding_campaign_wrapper(&$variables) {
+  $node = $variables['content']['#node'];
+  $campaign_image = file_create_url($node->field_ding_campaign_plus_image[LANGUAGE_NONE][0]["uri"]);
+  $variables['campaign_image'] = $campaign_image;
+  $variables['title'] = $node->title;
 }
