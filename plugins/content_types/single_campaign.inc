@@ -17,13 +17,13 @@ $plugin = array(
  * Implements hook_content_type_edit_form().
  */
 function ding_campaign_single_campaign_content_type_edit_form($form, &$form_state) {
+  $conf = $form_state['conf'];
   $available_campaigns = ding_campaign_plus_extra_get_list();
-
   $form['ding_campaign']['single_campaign'] = array(
     '#type' => 'select',
     '#title' => t('Select campaign'),
     '#options' => $available_campaigns,
-    '#default_value' => reset($available_campaigns),
+    '#default_value' => (!empty($conf['single_campaign'])) ? $conf['single_campaign'] : reset($available_campaigns),
   );
 
   return $form;
@@ -65,26 +65,15 @@ function ding_campaign_single_campaign_content_type_edit_form_submit($form, &$fo
  */
 function ding_campaign_single_campaign_content_type_render($subtype, $conf, $panel_args, $context) {
   $campaign = entity_load('node', [$conf['single_campaign']]);
-
-  if (!empty($campaign)) {
-    $node_view = node_view(reset($campaign), 'full');
-    $node_view['#style'] = 'medium';
-    $node_view['#widget_type'] = 'single';
-
-    // Check campaign link.
-    $campaign_link = '';
-    if (!empty($node_view["#node"]->field_ding_campaign_plus_link)) {
-      $campaign_link = $node_view['#node']->field_ding_campaign_plus_link[LANGUAGE_NONE][0]['url'];
-    }
-
-    $content = [
-      '#theme' => 'ding_campaign_wrapper',
-      '#content' => $node_view,
-      '#campaign_link' => $campaign_link,
-    ];
-    $block = new stdClass();
-    $block->content = $content;
-
-    return $block;
+  if (empty($campaign)) {
+    return '';
   }
+
+  $block = new stdClass();
+  $block->content = [
+    '#theme' => 'ding_campaign_wrapper',
+    '#content' => node_view(reset($campaign), 'full'),
+  ];
+
+  return $block;
 }
